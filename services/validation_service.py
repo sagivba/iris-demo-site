@@ -1,11 +1,8 @@
-"""Validation helpers for Iris feature inputs."""
+"""Validation helpers for Iris prediction input."""
 
-from __future__ import annotations
+from typing import Any
 
-import math
-from typing import Any, Dict, List
-
-IRIS_FEATURE_FIELDS = (
+FEATURE_NAMES = (
     "sepal_length",
     "sepal_width",
     "petal_length",
@@ -13,89 +10,50 @@ IRIS_FEATURE_FIELDS = (
 )
 
 
-ValidationError = Dict[str, str]
-ValidationResult = Dict[str, Any]
+def validate_and_prepare_input(raw_input: Any) -> dict[str, Any]:
+    """Validate raw payload and prepare model-ready input.
 
-
-def validate_iris_features(payload: Dict[str, Any] | None) -> ValidationResult:
-    """Validate and normalize Iris feature inputs.
-
-    Args:
-        payload: Mapping containing Iris feature keys.
-
-    Returns:
-        A dict with shape:
-            {
-                "is_valid": bool,
-                "data": dict[str, float],
-                "errors": list[{"field": str, "code": str, "message": str}],
-            }
+    Returns a stable dictionary shape with ``ok`` and ``errors`` keys.
+    On success, includes ``normalized`` and ``model_input``.
     """
-    if payload is None:
-        payload = {}
+    if not isinstance(raw_input, dict):
+        return {
+            "ok": False,
+            "errors": ["Input must be an object with Iris feature fields."],
+        }
 
-    errors: List[ValidationError] = []
-    normalized: Dict[str, float] = {}
+    errors: list[str] = []
+    normalized: dict[str, float] = {}
 
-    for field in IRIS_FEATURE_FIELDS:
-        if field not in payload:
-            errors.append(
-                {
-                    "field": field,
-                    "code": "required",
-                    "message": f"{field} is required.",
-                }
-            )
-            continue
-
-        raw_value = payload.get(field)
+    for field in FEATURE_NAMES:
+        raw_value = raw_input.get(field)
 
         if raw_value is None:
-            errors.append(
-                {
-                    "field": field,
-                    "code": "required",
-                    "message": f"{field} is required.",
-                }
-            )
+            errors.append(f"{field} is required.")
             continue
 
-        if isinstance(raw_value, str) and not raw_value.strip():
-            errors.append(
-                {
-                    "field": field,
-                    "code": "required",
-                    "message": f"{field} cannot be empty.",
-                }
-            )
-            continue
+        if isinstance(raw_value, str):
+            raw_value = raw_value.strip()
+            if raw_value == "":
+                errors.append(f"{field} is required.")
+                continue
 
         try:
-            numeric_value = float(raw_value)
+            normalized[field] = float(raw_value)
         except (TypeError, ValueError):
-            errors.append(
-                {
-                    "field": field,
-                    "code": "not_numeric",
-                    "message": f"{field} must be numeric.",
-                }
-            )
-            continue
+            errors.append(f"{field} must be a numeric value.")
 
-        if not math.isfinite(numeric_value):
-            errors.append(
-                {
-                    "field": field,
-                    "code": "not_numeric",
-                    "message": f"{field} must be a finite numeric value.",
-                }
-            )
-            continue
+    if errors:
+        return {
+            "ok": False,
+            "errors": errors,
+        }
 
-        normalized[field] = numeric_value
+    model_input = [[normalized[field] for field in FEATURE_NAMES]]
 
     return {
-        "is_valid": not errors,
-        "data": normalized if not errors else {},
-        "errors": errors,
+        "ok": True,
+        "errors": [],
+        "normalized": normalized,
+        "model_input": model_input,
     }

@@ -1,72 +1,56 @@
 import unittest
+from unittest.mock import patch
 
-from services.validation_service import validate_iris_features
+from services.prediction_service import predict_from_raw_input
 
 
-class ValidationServiceTestCase(unittest.TestCase):
-    def test_validate_iris_features_accepts_valid_numeric_input(self):
-        payload = {
+class PredictionServiceTests(unittest.TestCase):
+    def test_predict_from_raw_input_returns_prediction_on_success(self):
+        raw_input = {
             "sepal_length": "5.1",
-            "sepal_width": 3,
+            "sepal_width": "3.5",
             "petal_length": "1.4",
-            "petal_width": 0.2,
+            "petal_width": "0.2",
         }
 
-        result = validate_iris_features(payload)
+        with patch("services.prediction_service.predict_species", return_value="setosa") as mock_predict:
+            result = predict_from_raw_input(raw_input)
 
-        self.assertTrue(result["is_valid"])
-        self.assertEqual(result["errors"], [])
+        self.assertEqual(result, {"ok": True, "prediction": "setosa"})
+        mock_predict.assert_called_once_with([[5.1, 3.5, 1.4, 0.2]])
+
+    def test_predict_from_raw_input_returns_validation_errors(self):
+        raw_input = {
+            "sepal_length": "5.1",
+            "sepal_width": "not-a-number",
+            "petal_length": "1.4",
+        }
+
+        result = predict_from_raw_input(raw_input)
+
+        self.assertFalse(result["ok"])
+        self.assertIn("errors", result)
+        self.assertIn("sepal_width must be a numeric value.", result["errors"])
+        self.assertIn("petal_width is required.", result["errors"])
+
+    def test_predict_from_raw_input_returns_stable_model_error(self):
+        raw_input = {
+            "sepal_length": "6.0",
+            "sepal_width": "3.0",
+            "petal_length": "4.8",
+            "petal_width": "1.8",
+        }
+
+        with patch("services.prediction_service.predict_species", side_effect=RuntimeError("boom")):
+            result = predict_from_raw_input(raw_input)
+
         self.assertEqual(
-            result["data"],
+            result,
             {
-                "sepal_length": 5.1,
-                "sepal_width": 3.0,
-                "petal_length": 1.4,
-                "petal_width": 0.2,
+                "ok": False,
+                "errors": ["Prediction failed. Ensure the trained model is available."],
             },
         )
-
-    def test_validate_iris_features_rejects_missing_fields(self):
-        result = validate_iris_features({"sepal_length": 5.1})
-
-        self.assertFalse(result["is_valid"])
-        self.assertEqual(result["data"], {})
-        self.assertEqual(len(result["errors"]), 3)
-        self.assertEqual(result["errors"][0]["code"], "required")
-
-    def test_validate_iris_features_rejects_empty_or_none_values(self):
-        payload = {
-            "sepal_length": "",
-            "sepal_width": "   ",
-            "petal_length": None,
-            "petal_width": 0.2,
-        }
-
-        result = validate_iris_features(payload)
-
-        self.assertFalse(result["is_valid"])
-        self.assertEqual(result["data"], {})
-        error_fields = {error["field"] for error in result["errors"]}
-        self.assertSetEqual(
-            error_fields,
-            {"sepal_length", "sepal_width", "petal_length"},
-        )
-
-    def test_validate_iris_features_rejects_non_numeric_values(self):
-        payload = {
-            "sepal_length": "abc",
-            "sepal_width": object(),
-            "petal_length": "NaN",
-            "petal_width": "1.0",
-        }
-
-        result = validate_iris_features(payload)
-
-        self.assertFalse(result["is_valid"])
-        self.assertEqual(result["data"], {})
-        self.assertEqual(len(result["errors"]), 3)
-        for error in result["errors"]:
-            self.assertEqual(error["code"], "not_numeric")
 
 
 if __name__ == "__main__":

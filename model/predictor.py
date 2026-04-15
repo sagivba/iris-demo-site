@@ -1,70 +1,36 @@
-"""Inference utilities for Iris prediction."""
+"""Model loading and prediction utilities."""
 
-from __future__ import annotations
-
+from functools import lru_cache
 from pathlib import Path
-from typing import Sequence
+from typing import Any
 
-import joblib
-from sklearn.datasets import load_iris
-from sklearn.linear_model import LogisticRegression
-
-MODEL_PATH = Path(__file__).with_name("iris_model.joblib")
-SPECIES_BY_CLASS = {
+MODEL_FILE = Path(__file__).resolve().parent / "iris_model.joblib"
+CLASS_LABELS = {
     0: "setosa",
     1: "versicolor",
     2: "virginica",
 }
 
-_MODEL = None
+
+@lru_cache(maxsize=1)
+def load_model() -> Any:
+    """Load and cache the persisted Iris model artifact."""
+    if not MODEL_FILE.exists():
+        raise FileNotFoundError(
+            f"Model artifact not found at {MODEL_FILE}. Run model/train.py first."
+        )
+
+    import joblib
+
+    return joblib.load(MODEL_FILE)
 
 
-class IrisPredictor:
-    """Simple wrapper around a trained Iris classifier."""
+def predict_species(model_input: list[list[float]]) -> str:
+    """Predict a species label from prepared model input."""
+    model = load_model()
+    prediction = model.predict(model_input)[0]
 
-    def __init__(self, model=None):
-        self._model = model or _load_or_initialize_model()
+    if isinstance(prediction, str):
+        return prediction
 
-    def predict(self, features: Sequence[float]) -> dict[str, object]:
-        normalized_features = _normalize_features(features)
-        predicted_class = int(self._model.predict([normalized_features])[0])
-        species = SPECIES_BY_CLASS[predicted_class]
-        return {
-            "prediction": species,
-            "class_id": predicted_class,
-            "features": normalized_features,
-        }
-
-
-def predict_iris(features: Sequence[float]) -> dict[str, object]:
-    """Predict an Iris species for a sequence of four numeric features."""
-    predictor = IrisPredictor()
-    return predictor.predict(features)
-
-
-def _load_or_initialize_model():
-    global _MODEL
-
-    if _MODEL is not None:
-        return _MODEL
-
-    if MODEL_PATH.exists():
-        _MODEL = joblib.load(MODEL_PATH)
-        return _MODEL
-
-    iris = load_iris()
-    model = LogisticRegression(max_iter=300)
-    model.fit(iris.data, iris.target)
-    joblib.dump(model, MODEL_PATH)
-    _MODEL = model
-    return _MODEL
-
-
-def _normalize_features(features: Sequence[float]) -> list[float]:
-    if len(features) != 4:
-        raise ValueError("Exactly four Iris features are required.")
-
-    normalized: list[float] = []
-    for value in features:
-        normalized.append(float(value))
-    return normalized
+    return CLASS_LABELS.get(int(prediction), str(prediction))
