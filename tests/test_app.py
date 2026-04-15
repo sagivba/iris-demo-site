@@ -1,6 +1,7 @@
 """Tests for browser-facing Flask routes."""
 
 import unittest
+from unittest.mock import patch
 
 from app import create_app
 
@@ -44,8 +45,29 @@ class WebRoutesTestCase(unittest.TestCase):
         )
 
         self.assertEqual(response.status_code, 400)
-        self.assertIn(b"sepal_length is required", response.data)
-        self.assertIn(b"sepal_width must be a valid number", response.data)
+        self.assertIn(b"Sepal length is required.", response.data)
+        self.assertIn(b"Sepal width must be a number (for example: 5.1).", response.data)
+        self.assertIn(b"Iris Predictor", response.data)
+
+    def test_predict_form_submission_internal_prediction_error(self) -> None:
+        with patch("routes.web.predict_iris", side_effect=RuntimeError("model failed")):
+            response = self.client.post(
+                "/predict",
+                data={
+                    "sepal_length": "5.1",
+                    "sepal_width": "3.5",
+                    "petal_length": "1.4",
+                    "petal_width": "0.2",
+                },
+            )
+
+        self.assertEqual(response.status_code, 500)
+        self.assertIn(
+            b"We could not generate a prediction right now. Please try again in a moment.",
+            response.data,
+        )
+        self.assertIn(b"Iris Predictor", response.data)
+        self.assertNotIn(b"RuntimeError", response.data)
 
 
 if __name__ == "__main__":
