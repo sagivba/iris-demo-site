@@ -1,506 +1,119 @@
 # TODO
 
-## Goal
+## מטרה
 
-Build a small but complete Flask-based reference implementation for an ML web app using the Iris dataset.
+להשלים אפליקציית דוגמה קטנה אך מלאה ב־Flask לחיזוי Iris, עם שכבות ברורות (routes / services / model), תיעוד עדכני, והרצה מקומית יציבה.
 
-This TODO is intentionally split into small, reviewable tasks for AI-assisted execution.
-Run one task at a time.
-If a task depends on a previous task, wait for the previous task to finish and be reviewed before continuing.
+## כללים גלובליים
 
-## Global rules for every task
+- להשתמש ב־Flask בלבד.
+- לפתח לפי WSL + Conda + VS Code.
+- להשתמש ב־`unittest` בלבד (ללא `pytest`).
+- לשמור שינויים קטנים וממוקדים.
+- לא לבצע ריפקטור רחב ללא בקשה מפורשת.
+- לא להוסיף מסד נתונים.
+- לא לאמן מודל בזמן request.
+- לשמור על route handlers דקים וללא לוגיקת ML.
+- לעדכן תיעוד כשפקודות/התנהגות/מבנה משתנים.
 
-- Use Flask.
-- Develop for WSL + Conda + VS Code.
-- Use `unittest` only. Do not introduce `pytest`.
-- Keep diffs small and focused.
-- Do not perform broad refactors unless explicitly requested.
-- Do not add a database.
-- Do not add a JavaScript framework.
-- Do not retrain the model during requests.
-- Keep route handlers thin.
-- Keep ML logic out of route handlers.
-- Keep dependencies minimal.
-- Update docs when behavior, commands, or structure change.
-- Keep CI green.
+## סדר תלות
 
-## Dependency order
-
-Run tasks in this order unless explicitly stated otherwise.
-
-- Task 01 -> Task 02 -> Task 03 -> Task 04 -> Task 05 -> Task 06 -> Task 07 -> Task 08 -> Task 09 -> Task 10 -> Task 11 -> Task 12 -> Task 13 -> Task 14
-
-Do not skip required predecessors.
+Task 01 → Task 02 → Task 03 → Task 04 → Task 05 → Task 06 → Task 07 → Task 08 → Task 09 → Task 10 → Task 11 → Task 12 → Task 13 → Task 14
 
 ---
 
-## Task 01 - Fill bootstrap files with minimal initial content
+## Task 01 - השלמת קבצי Bootstrap ראשוניים
+- [ ] להבטיח שכל קבצי הבסיס קיימים ומכילים תוכן מינימלי תקין (`.env`, קבצי `.vscode`, `ci.yml` ועוד).
+- [ ] להשלים placeholders חסרים כך שהשלד כולו עקבי (כולל קבצים שכרגע ריקים לגמרי).
 
-### Depends on
-- Existing repo skeleton already created
+## Task 02 - אפליקציית Flask מינימלית עם דף בית
+- [x] אפליקציה ניתנת להרצה עם `app.py` ו־`create_app`.
+- [x] הנתיב `/` מחזיר 200 ומציג טופס Iris בסיסי.
 
-### Objective
-Add minimal initial content so the repo is no longer empty and can be opened cleanly in VS Code and GitHub.
+## Task 03 - תצורת VS Code ו־Workflow מקומי
+- [ ] להשלים `.vscode/settings.json`, `.vscode/launch.json`, `.vscode/tasks.json`.
+- [ ] להשלים `docs/dev-python.md` עם זרימת עבודה מלאה ל־WSL + Conda + unittest.
+- [ ] להוסיף/לתעד `PYTHONPATH` וקונפיגורציית הרצה/בדיקות.
 
-### Scope
-Update only:
-- `README.md`
-- `requirements.txt`
-- `.gitignore`
-- `.env`
-- `app.py`
-- `routes/__init__.py`
-- `routes/web.py`
-- `routes/api.py`
-- `services/__init__.py`
-- `services/prediction_service.py`
-- `services/validation_service.py`
-- `model/__init__.py`
-- `model/train.py`
-- `model/predictor.py`
-- `templates/base.html`
-- `templates/index.html`
-- `templates/result.html`
-- `static/style.css`
-- `tests/__init__.py`
-- `tests/test_app.py`
-- `tests/test_api.py`
-- `tests/test_services.py`
-- `docs/dev-python.md`
-- `.vscode/settings.json`
-- `.vscode/launch.json`
-- `.vscode/tasks.json`
-- `.github/workflows/ci.yml`
+## Task 04 - שכבת מודל: אימון ושמירת ארטיפקט
+- [ ] לממש `model/train.py` (טעינת Iris, אימון, שמירת מודל לדיסק).
+- [ ] לתעד פקודת אימון בפועל ב־README ובתיעוד המפתחים.
 
-### Deliverable
-- Minimal placeholders only
-- No real ML logic yet
-- No broken imports
-- App should at least import cleanly
+## Task 05 - טעינת מודל ושירות חיזוי
+- [ ] לחבר את `services/prediction_service.py` ל־`model/predictor.py` במקום חיזוי placeholder.
+- [ ] להבטיח שהשירות מחזיר `predicted_class_index` ו־`predicted_class_label` על סמך מודל אמיתי.
 
-### Stop after completion
-Wait before moving to Task 02.
+## Task 06 - שכבת ולידציה לקלט
+- [x] קיימת ולידציה מפורשת לכל 4 השדות (`required` + המרה למספר).
+- [x] הוולידציה מופרדת לשירות וניתנת לשימוש חוזר.
 
----
+## Task 07 - זרימת UI מלאה (טופס + תוצאה)
+- [x] טופס HTML כולל את 4 שדות Iris.
+- [x] שליחה תקינה מציגה דף תוצאה עם חיזוי וקלטים.
+- [x] שליחה לא תקינה מציגה שגיאות ברורות למשתמש.
+- [ ] לשפר סגנון בסיסי ב־`static/style.css` (כרגע ריק).
 
-## Task 02 - Make Flask app runnable with a minimal home page
+## Task 08 - נתיב API ל־JSON
+- [ ] לממש `POST /api/predict` ב־`routes/api.py`.
+- [ ] להחזיר תגובת JSON תקינה גם בהצלחה וגם בשגיאת ולידציה.
 
-### Depends on
-- Task 01
+## Task 09 - בדיקות אפליקציה (Web + API)
+- [ ] להשלים `tests/test_api.py`.
+- [x] קיימות בדיקות Web בסיסיות (`tests/test_app.py`).
+- [ ] לוודא כיסוי גם למסלולי API תקינים ושגויים.
 
-### Objective
-Create a minimal runnable Flask application.
+## Task 10 - בדיקות שכבת שירותים
+- [ ] ליישר `tests/test_services.py` לממשק הקיים ב־`services/prediction_service.py`.
+- [ ] להבטיח שהבדיקות דטרמיניסטיות ועוברות ב־`python -m unittest discover -v`.
 
-### Scope
-Implement:
-- `app.py`
-- `routes/web.py`
-- `templates/base.html`
-- `templates/index.html`
-- `static/style.css`
+## Task 11 - README מלא ומעודכן
+- [ ] לעדכן README כך שישקף מצב מימוש אמיתי (לא "scaffold בלבד" אם בפועל יש Web flow פעיל).
+- [ ] להוסיף הנחיות מדויקות להרצה, בדיקות, שימוש API, וארכיטקטורה נוכחית.
 
-### Requirements
-- `/` must return HTTP 200
-- Page should render a simple Iris input form shell
-- Form fields may exist as placeholders, but no prediction flow yet
-- Keep app structure simple and explicit
+## Task 12 - תיעוד מפתחים
+- [ ] להשלים `docs/dev-python.md` (כרגע ריק).
+- [ ] לתעד הרצה, בדיקות, אימון מחדש, ניפוי תקלות, ו־VS Code workflow.
 
-### Deliverable
-- `python app.py` starts Flask locally
-- Home page renders successfully
+## Task 13 - CI
+- [ ] לממש `.github/workflows/ci.yml` עם הרצת unit tests על `push` ו־`pull_request`.
 
-### Stop after completion
-Wait before moving to Task 03.
+## Task 14 - Docker אופציונלי
+- [ ] לממש `Dockerfile` בסיסי להרצה אופציונלית.
+- [ ] לעדכן README כדי להבהיר ש־Docker אופציונלי בלבד ולא הזרימה הראשית.
 
 ---
 
-## Task 03 - Add VS Code and local Python workflow configuration
+## בדיקות מצב לפי אזורים (Checklist מהיר)
 
-### Depends on
-- Task 01
+### מבנה פרויקט
+- [x] קיימים נתיבים עיקריים: `routes/`, `services/`, `model/`, `templates/`, `static/`, `tests/`.
+- [ ] קבצי היגיינת ריפו מרכזיים עדיין חסרים/ריקים בחלקם (`.env`, `.vscode/*`, `ci.yml`).
 
-### Objective
-Make the repo comfortable to use from VS Code in WSL with Conda and unittest discovery.
+### Model layer
+- [x] יש `model/predictor.py` עם טעינת מודל ו־predict.
+- [ ] `model/train.py` עדיין לא ממומש.
 
-### Scope
-Implement or refine:
-- `.vscode/settings.json`
-- `.vscode/launch.json`
-- `.vscode/tasks.json`
-- `.env`
-- `docs/dev-python.md`
+### Validation
+- [x] קיימת ולידציה מפורשת לארבעת השדות.
 
-### Requirements
-- unittest discovery works from VS Code
-- CLI test command is documented
-- Flask launch config exists
-- tasks for run, test, and train are defined if practical
-- `PYTHONPATH` handling is documented clearly
+### Services
+- [ ] שירות החיזוי עדיין placeholder ולא מחובר בפועל למודל המאומן.
 
-### Deliverable
-- Clean local developer workflow documentation and config
+### Routes
+- [x] קיימים Web routes (`/`, `/predict`) עם זרימה תקינה.
+- [ ] API route עדיין לא קיים.
 
-### Stop after completion
-Wait before moving to Task 04.
+### UI / Templates / Static
+- [x] קיימים `base/index/result` עם זרימת טופס ותוצאה.
+- [ ] `static/style.css` ריק.
 
----
+### Tests
+- [ ] `unittest` discovery כרגע לא יציב עקב חוסר התאמה בין tests לשירותים ו־API חסר.
 
-## Task 04 - Implement Iris training pipeline and persist model
+### README + Docs
+- [ ] README לא מסונכרן במלואו עם המצב בפועל.
+- [ ] `docs/dev-python.md` ריק.
 
-### Depends on
-- Task 02
-- Task 03
-
-### Objective
-Train a simple Iris model from scikit-learn and save it to disk.
-
-### Scope
-Implement:
-- `model/train.py`
-- `model/predictor.py`
-- `requirements.txt`
-- `README.md`
-- `docs/dev-python.md`
-
-### Requirements
-- Use Iris dataset from scikit-learn
-- Train a simple model
-- Save the trained artifact to a file
-- Do not train during request handling
-- Keep implementation simple and explicit
-- Document the train command
-
-### Deliverable
-- A reproducible training command
-- A persisted model artifact path defined by the project
-
-### Stop after completion
-Wait before moving to Task 05.
-
----
-
-## Task 05 - Add model loading utility and prediction service
-
-### Depends on
-- Task 04
-
-### Objective
-Load the persisted model and expose prediction logic through the service layer.
-
-### Scope
-Implement:
-- `model/predictor.py`
-- `services/prediction_service.py`
-
-### Requirements
-- Load model from disk
-- Expose a function that accepts the 4 Iris numeric inputs
-- Return both predicted class index and label
-- Keep service independent from Flask request objects
-- Keep route handlers free of ML logic
-
-### Deliverable
-- Prediction service callable from future web and API routes
-
-### Stop after completion
-Wait before moving to Task 06.
-
----
-
-## Task 06 - Add input validation service
-
-### Depends on
-- Task 05
-
-### Objective
-Create explicit validation for the 4 numeric input fields.
-
-### Scope
-Implement:
-- `services/validation_service.py`
-
-### Requirements
-- Validate required fields
-- Validate numeric conversion
-- Return clear structured errors
-- Keep validation reusable for both form and API usage
-- Do not hide behavior in decorators or magic abstractions
-
-### Deliverable
-- Reusable validation flow for UI and API
-
-### Stop after completion
-Wait before moving to Task 07.
-
----
-
-## Task 07 - Implement HTML form submission and result page
-
-### Depends on
-- Task 05
-- Task 06
-
-### Objective
-Complete the browser flow from form input to prediction result page.
-
-### Scope
-Implement:
-- `routes/web.py`
-- `templates/index.html`
-- `templates/result.html`
-- `templates/base.html`
-- `static/style.css`
-
-### Requirements
-- Home page form contains:
-  - `sepal_length`
-  - `sepal_width`
-  - `petal_length`
-  - `petal_width`
-- Form submission triggers validation
-- Valid submission returns a result page
-- Result page shows:
-  - all input values
-  - predicted label
-- Invalid submission shows a clear user-facing error path
-
-### Deliverable
-- End-to-end prediction flow through HTML
-
-### Stop after completion
-Wait before moving to Task 08.
-
----
-
-## Task 08 - Implement JSON API endpoint
-
-### Depends on
-- Task 05
-- Task 06
-
-### Objective
-Add internal prediction API endpoint.
-
-### Scope
-Implement:
-- `routes/api.py`
-- `app.py` if route registration needs it
-
-### Requirements
-- Add `POST /api/predict`
-- Accept JSON body with the 4 fields
-- On success, return JSON with:
-  - `predicted_class_index`
-  - `predicted_class_label`
-- On invalid input, return clear JSON error response
-- Keep route handler thin
-
-### Deliverable
-- Working JSON prediction endpoint
-
-### Stop after completion
-Wait before moving to Task 09.
-
----
-
-## Task 09 - Add app tests for web and API flows
-
-### Depends on
-- Task 07
-- Task 08
-
-### Objective
-Add `unittest` coverage for the Flask app behavior.
-
-### Scope
-Implement:
-- `tests/test_app.py`
-- `tests/test_api.py`
-
-### Requirements
-Add tests for:
-- home page loads
-- valid form submission
-- invalid form submission
-- valid API request
-- invalid API request
-
-### Deliverable
-- Tests pass with:
-  - `python -m unittest discover -v`
-
-### Stop after completion
-Wait before moving to Task 10.
-
----
-
-## Task 10 - Add prediction service unit tests
-
-### Depends on
-- Task 05
-- Task 06
-
-### Objective
-Add focused service-level unit tests.
-
-### Scope
-Implement:
-- `tests/test_services.py`
-
-### Requirements
-- Test prediction service success path
-- Test validation behavior
-- Keep tests deterministic
-- Do not require network access
-- Avoid heavy integration setup
-
-### Deliverable
-- Service-layer test coverage using `unittest`
-
-### Stop after completion
-Wait before moving to Task 11.
-
----
-
-## Task 11 - Improve README for full project usage
-
-### Depends on
-- Task 04
-- Task 07
-- Task 08
-- Task 09
-- Task 10
-
-### Objective
-Turn `README.md` into a complete project guide.
-
-### Scope
-Update:
-- `README.md`
-
-### Requirements
-Document:
-- project purpose
-- repository structure
-- Conda environment setup
-- dependency installation
-- training command
-- app run command
-- test command
-- API usage example
-- optional Docker usage
-- architecture summary
-
-### Deliverable
-- A strong top-level README for humans and AI agents
-
-### Stop after completion
-Wait before moving to Task 12.
-
----
-
-## Task 12 - Improve developer documentation
-
-### Depends on
-- Task 03
-- Task 09
-- Task 10
-- Task 11
-
-### Objective
-Complete local workflow documentation.
-
-### Scope
-Update:
-- `docs/dev-python.md`
-
-### Requirements
-Document:
-- WSL workflow
-- VS Code usage
-- unittest discovery
-- available tasks
-- Flask run/debug flow
-- common troubleshooting
-- how to re-train model
-- how to run tests from CLI and VS Code
-
-### Deliverable
-- Developer workflow doc aligned with actual repo behavior
-
-### Stop after completion
-Wait before moving to Task 13.
-
----
-
-## Task 13 - Finalize CI workflow
-
-### Depends on
-- Task 09
-- Task 10
-
-### Objective
-Add or refine GitHub Actions CI.
-
-### Scope
-Update:
-- `.github/workflows/ci.yml`
-
-### Requirements
-- Run on `push`
-- Run on `pull_request`
-- Install dependencies
-- Run `python -m unittest discover -v`
-- Keep workflow simple
-
-### Deliverable
-- Working basic CI pipeline
-
-### Stop after completion
-Wait before moving to Task 14.
-
----
-
-## Task 14 - Add optional Docker support
-
-### Depends on
-- Task 11
-- Task 12
-- Task 13
-
-### Objective
-Add a simple Docker run path without changing the primary local workflow.
-
-### Scope
-Implement or update:
-- `Dockerfile`
-- `README.md`
-
-### Requirements
-- Docker support is optional only
-- Main workflow remains WSL + Conda + VS Code
-- Keep Dockerfile simple
-- Do not redesign project layout around Docker
-
-### Deliverable
-- Optional containerized run mode documented clearly
-
-### Stop after completion
-This is the last planned task.
-
----
-
-## Execution notes for Codex
-
-- Run one task at a time.
-- After each task, stop and wait.
-- If a task requires a previous task, do not continue until that task is completed.
-- Do not combine multiple tasks into one large change.
-- Do not add features that belong to later tasks.
-- Keep documentation aligned with every meaningful change.
-- Keep imports, naming, and structure explicit and easy to follow.
-
-## Recommended first task to run
-
-Start with:
-- Task 01 - Fill bootstrap files with minimal initial content
+### מוכנות להרצה מקומית
+- [x] אפליקציית Web בסיסית עולה.
+- [ ] אימון מודל, API, ותיעוד סביבת פיתוח עדיין לא מוכנים מקצה לקצה.
