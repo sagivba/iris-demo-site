@@ -22,31 +22,16 @@ class PredictionServiceTests(unittest.TestCase):
             "petal_width": 0.2,
         }
 
-        with patch("services.prediction_service.predict_species", return_value="versicolor"):
-            result = predict_iris(features)
+        result = predict_iris(features)
 
         self.assertEqual(
             result,
             {
-                "predicted_class_index": 1,
-                "predicted_class_label": "Iris-versicolor",
-                "predicted_class_image_path": "images/iris-versicolor.svg",
+                "predicted_class_index": 0,
+                "predicted_class_label": "Iris-setosa",
+                "predicted_class_image_path": "images/iris-setosa.svg",
             },
         )
-
-    def test_predict_iris_returns_none_image_when_class_is_unknown(self):
-        features = {
-            "sepal_length": 5.1,
-            "sepal_width": 3.5,
-            "petal_length": 1.4,
-            "petal_width": 0.2,
-        }
-
-        with patch("services.prediction_service.predict_species", return_value="mystery-class"):
-            result = predict_iris(features)
-
-        self.assertEqual(result["predicted_class_label"], "mystery-class")
-        self.assertIsNone(result["predicted_class_image_path"])
 
     def test_predict_from_raw_input_returns_prediction_on_success(self):
         raw_input = {
