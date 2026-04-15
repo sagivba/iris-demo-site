@@ -4,32 +4,40 @@
 
 {% block content %}
   <h1>Iris Predictor</h1>
+  <p class="page-intro">Enter flower measurements to predict an Iris class.</p>
 
   {% if errors %}
-    <ul>
-      {% for error in errors %}
-        <li>{{ error }}</li>
-      {% endfor %}
-    </ul>
+    <section class="result-panel result-panel--error" aria-live="polite">
+      <h2>Input error</h2>
+      <p>Please fix the following fields and submit again.</p>
+      <ul class="error-list">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </section>
   {% endif %}
 
-  <form method="post" action="{{ url_for('web.predict') }}">
-    <label>
+  <form method="post" action="{{ url_for('web.predict') }}" class="predict-form">
+    <label class="form-field">
       Sepal length
       <input name="sepal_length" value="{{ form_values.get('sepal_length', '') }}" />
     </label>
-    <label>
+    <label class="form-field">
       Sepal width
       <input name="sepal_width" value="{{ form_values.get('sepal_width', '') }}" />
     </label>
-    <label>
+    <label class="form-field">
       Petal length
       <input name="petal_length" value="{{ form_values.get('petal_length', '') }}" />
     </label>
-    <label>
+    <label class="form-field">
       Petal width
       <input name="petal_width" value="{{ form_values.get('petal_width', '') }}" />
     </label>
-    <button type="submit">Predict</button>
+    <div class="button-row">
+      <button type="submit">Predict</button>
+      <button type="reset" class="button-secondary">Reset</button>
+    </div>
   </form>
 {% endblock %}
