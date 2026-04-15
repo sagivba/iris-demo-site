@@ -1,8 +1,10 @@
-"""Validation helpers for Iris prediction input."""
+"""Validation utilities for Iris prediction inputs."""
 
-from typing import Any
+from __future__ import annotations
 
-FEATURE_NAMES = (
+from typing import Dict, List, Tuple
+
+IRIS_FIELDS: Tuple[str, ...] = (
     "sepal_length",
     "sepal_width",
     "petal_length",
@@ -10,50 +12,25 @@ FEATURE_NAMES = (
 )
 
 
-def validate_and_prepare_input(raw_input: Any) -> dict[str, Any]:
-    """Validate raw payload and prepare model-ready input.
+def validate_iris_inputs(raw_inputs: Dict[str, str]) -> Tuple[Dict[str, float], List[str]]:
+    """Validate and normalize raw Iris inputs.
 
-    Returns a stable dictionary shape with ``ok`` and ``errors`` keys.
-    On success, includes ``normalized`` and ``model_input``.
+    Returns:
+        tuple[dict[str, float], list[str]]: Parsed values and validation errors.
     """
-    if not isinstance(raw_input, dict):
-        return {
-            "ok": False,
-            "errors": ["Input must be an object with Iris feature fields."],
-        }
+    values: Dict[str, float] = {}
+    errors: List[str] = []
 
-    errors: list[str] = []
-    normalized: dict[str, float] = {}
+    for field in IRIS_FIELDS:
+        raw_value = str(raw_inputs.get(field, "")).strip()
 
-    for field in FEATURE_NAMES:
-        raw_value = raw_input.get(field)
-
-        if raw_value is None:
+        if not raw_value:
             errors.append(f"{field} is required.")
             continue
 
-        if isinstance(raw_value, str):
-            raw_value = raw_value.strip()
-            if raw_value == "":
-                errors.append(f"{field} is required.")
-                continue
-
         try:
-            normalized[field] = float(raw_value)
-        except (TypeError, ValueError):
-            errors.append(f"{field} must be a numeric value.")
+            values[field] = float(raw_value)
+        except ValueError:
+            errors.append(f"{field} must be a valid number.")
 
-    if errors:
-        return {
-            "ok": False,
-            "errors": errors,
-        }
-
-    model_input = [[normalized[field] for field in FEATURE_NAMES]]
-
-    return {
-        "ok": True,
-        "errors": [],
-        "normalized": normalized,
-        "model_input": model_input,
-    }
+    return values, errors

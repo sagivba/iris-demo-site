@@ -1,13 +1,18 @@
-"""Flask app entry point for Iris demo site."""
+"""Application entrypoint for the Iris demo site."""
 
 from flask import Flask
 
-app = Flask(__name__)
+from routes.web import web_bp
 
 
-@app.get("/")
-def home():
-    return "Iris Demo Site"
+def create_app() -> Flask:
+    """Create and configure the Flask application."""
+    app = Flask(__name__)
+    app.register_blueprint(web_bp)
+    return app
+
+
+app = create_app()
 
 
 if __name__ == "__main__":

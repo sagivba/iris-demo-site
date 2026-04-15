@@ -1,29 +1,29 @@
-"""Prediction service layer for the Iris app."""
+"""Service layer entrypoint for Iris predictions."""
 
-from typing import Any
+from __future__ import annotations
 
-from model.predictor import predict_species
-from services.validation_service import validate_and_prepare_input
+from typing import Dict
+
+SPECIES_LABELS = {
+    0: "setosa",
+    1: "versicolor",
+    2: "virginica",
+}
 
 
-def predict_from_raw_input(raw_input: Any) -> dict[str, Any]:
-    """Validate raw input, call model layer, and return a stable response."""
-    validation_result = validate_and_prepare_input(raw_input)
-    if not validation_result["ok"]:
-        return {
-            "ok": False,
-            "errors": validation_result["errors"],
-        }
+def predict_iris(features: Dict[str, float]) -> Dict[str, object]:
+    """Return a placeholder prediction for validated Iris features.
 
-    try:
-        species = predict_species(validation_result["model_input"])
-    except Exception:
-        return {
-            "ok": False,
-            "errors": ["Prediction failed. Ensure the trained model is available."],
-        }
+    Note:
+        This service intentionally shields routes from model details.
+        It currently returns a deterministic placeholder prediction.
+    """
+    _ = features
+
+    predicted_class_index = 0
+    predicted_class_label = SPECIES_LABELS[predicted_class_index]
 
     return {
-        "ok": True,
-        "prediction": species,
+        "predicted_class_index": predicted_class_index,
+        "predicted_class_label": predicted_class_label,
     }
