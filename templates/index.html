@@ -44,7 +44,19 @@
   <section class="result-panel" aria-live="polite">
     <h2>Prediction Result</h2>
     {% if prediction_label %}
-      <p>{{ prediction_label }}</p>
+      <p class="prediction-label">{{ prediction_label }}</p>
+      {% if prediction_image_path %}
+        <figure class="prediction-visual">
+          <img
+            src="{{ url_for('static', filename=prediction_image_path) }}"
+            alt="{{ prediction_image_alt }}"
+            class="prediction-image"
+          />
+          <figcaption>Example image of predicted class.</figcaption>
+        </figure>
+      {% else %}
+        <p class="supporting-text">No example image available for this predicted class.</p>
+      {% endif %}
     {% else %}
       <p>No prediction yet.</p>
     {% endif %}
