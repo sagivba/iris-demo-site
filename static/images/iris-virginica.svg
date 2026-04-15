@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 400" role="img" aria-labelledby="title desc">
+  <title id="title">Iris-virginica example</title>
+  <desc id="desc">Stylized magenta virginica bloom on a light background.</desc>
+  <rect width="640" height="400" fill="#fdf2f8"/>
+  <circle cx="320" cy="220" r="54" fill="#be185d"/>
+  <ellipse cx="258" cy="192" rx="76" ry="36" fill="#ec4899" transform="rotate(-18 258 192)"/>
+  <ellipse cx="382" cy="192" rx="76" ry="36" fill="#ec4899" transform="rotate(18 382 192)"/>
+  <ellipse cx="320" cy="142" rx="56" ry="30" fill="#f9a8d4"/>
+  <rect x="310" y="242" width="20" height="108" fill="#15803d"/>
+  <ellipse cx="274" cy="298" rx="52" ry="19" fill="#22c55e" transform="rotate(-26 274 298)"/>
+  <ellipse cx="366" cy="304" rx="52" ry="19" fill="#16a34a" transform="rotate(26 366 304)"/>
+  <text x="320" y="44" text-anchor="middle" font-family="Arial, sans-serif" font-size="28" fill="#9d174d">Iris-virginica</text>
+</svg>
