@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}Iris Predictor{% endblock %}
+
+{% block content %}
+  <h1>Iris Predictor</h1>
+
+  {% if errors %}
+    <ul>
+      {% for error in errors %}
+        <li>{{ error }}</li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  <form method="post" action="{{ url_for('web.predict') }}">
+    <label>
+      Sepal length
+      <input name="sepal_length" value="{{ form_values.get('sepal_length', '') }}" />
+    </label>
+    <label>
+      Sepal width
+      <input name="sepal_width" value="{{ form_values.get('sepal_width', '') }}" />
+    </label>
+    <label>
+      Petal length
+      <input name="petal_length" value="{{ form_values.get('petal_length', '') }}" />
+    </label>
+    <label>
+      Petal width
+      <input name="petal_width" value="{{ form_values.get('petal_width', '') }}" />
+    </label>
+    <button type="submit">Predict</button>
+  </form>
+{% endblock %}

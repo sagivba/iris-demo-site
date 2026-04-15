@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+
+{% block title %}Prediction Result{% endblock %}
+
+{% block content %}
+  <h1>Prediction Result</h1>
+  <p>Predicted class: {{ prediction.predicted_class_label }}</p>
+
+  <h2>Inputs</h2>
+  <ul>
+    {% for key, value in inputs.items() %}
+      <li>{{ key }}: {{ value }}</li>
+    {% endfor %}
+  </ul>
+
+  <a href="{{ url_for('web.home') }}">Try another</a>
+{% endblock %}
