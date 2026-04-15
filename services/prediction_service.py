@@ -8,10 +8,29 @@ from model.predictor import predict_species
 from services.validation_service import validate_iris_inputs
 
 SPECIES_LABELS = {
-    0: "setosa",
-    1: "versicolor",
-    2: "virginica",
+    0: "Iris-setosa",
+    1: "Iris-versicolor",
+    2: "Iris-virginica",
 }
+
+CLASS_IMAGE_PATHS = {
+    "iris-setosa": "images/iris-setosa.svg",
+    "iris-versicolor": "images/iris-versicolor.svg",
+    "iris-virginica": "images/iris-virginica.svg",
+}
+
+
+def get_class_image_path(class_label: str) -> str | None:
+    """Return static image path for a predicted class label."""
+    normalized_label = class_label.strip().lower()
+
+    if normalized_label in CLASS_IMAGE_PATHS:
+        return CLASS_IMAGE_PATHS[normalized_label]
+
+    if not normalized_label.startswith("iris-"):
+        normalized_label = f"iris-{normalized_label}"
+
+    return CLASS_IMAGE_PATHS.get(normalized_label)
 
 
 def predict_iris(features: Dict[str, float]) -> Dict[str, object]:
@@ -21,9 +40,12 @@ def predict_iris(features: Dict[str, float]) -> Dict[str, object]:
     predicted_class_index = 0
     predicted_class_label = SPECIES_LABELS[predicted_class_index]
 
+    predicted_class_image_path = get_class_image_path(predicted_class_label)
+
     return {
         "predicted_class_index": predicted_class_index,
         "predicted_class_label": predicted_class_label,
+        "predicted_class_image_path": predicted_class_image_path,
     }
 
 

@@ -19,19 +19,52 @@ class WebRoutesTestCase(unittest.TestCase):
         self.assertIn(b"Iris Predictor", response.data)
 
     def test_predict_form_submission_success(self) -> None:
-        response = self.client.post(
-            "/predict",
-            data={
-                "sepal_length": "5.1",
-                "sepal_width": "3.5",
-                "petal_length": "1.4",
-                "petal_width": "0.2",
+        with patch(
+            "routes.web.predict_iris",
+            return_value={
+                "predicted_class_index": 0,
+                "predicted_class_label": "Iris-setosa",
+                "predicted_class_image_path": "images/iris-setosa.svg",
             },
-        )
+        ):
+            response = self.client.post(
+                "/predict",
+                data={
+                    "sepal_length": "5.1",
+                    "sepal_width": "3.5",
+                    "petal_length": "1.4",
+                    "petal_width": "0.2",
+                },
+            )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Prediction Result", response.data)
-        self.assertIn(b"setosa", response.data)
+        self.assertIn(b"Iris-setosa", response.data)
+        self.assertIn(b"Example image of predicted class.", response.data)
+        self.assertIn(b"static/images/iris-setosa.svg", response.data)
+
+    def test_predict_form_submission_renders_image_fallback_message(self) -> None:
+        with patch(
+            "routes.web.predict_iris",
+            return_value={
+                "predicted_class_index": None,
+                "predicted_class_label": "Iris-unknown",
+                "predicted_class_image_path": None,
+            },
+        ):
+            response = self.client.post(
+                "/predict",
+                data={
+                    "sepal_length": "5.1",
+                    "sepal_width": "3.5",
+                    "petal_length": "1.4",
+                    "petal_width": "0.2",
+                },
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Iris-unknown", response.data)
+        self.assertIn(b"No example image available for this predicted class.", response.data)
 
     def test_predict_form_submission_validation_error(self) -> None:
         response = self.client.post(

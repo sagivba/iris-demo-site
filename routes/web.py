@@ -45,7 +45,14 @@ def _format_validation_errors(validation_errors: list[str]) -> list[str]:
 @web_bp.get("/")
 def home():
     """Render the main Iris input page."""
-    return render_template("index.html", errors=[], form_values={}, prediction_label=None)
+    return render_template(
+        "index.html",
+        errors=[],
+        form_values={},
+        prediction_label=None,
+        prediction_image_path=None,
+        prediction_image_alt=None,
+    )
 
 
 @web_bp.post("/predict")
@@ -92,4 +99,6 @@ def predict():
         errors=[],
         form_values=raw_inputs,
         prediction_label=prediction["predicted_class_label"],
+        prediction_image_path=prediction["predicted_class_image_path"],
+        prediction_image_alt=prediction["predicted_class_label"],
     )
