@@ -52,16 +52,7 @@ class WebRoutesTestCase(unittest.TestCase):
                 "petal_length": "1.4",
                 "petal_width": "0.2",
             },
-        ):
-            response = self.client.post(
-                "/predict",
-                data={
-                    "sepal_length": "5.1",
-                    "sepal_width": "3.5",
-                    "petal_length": "1.4",
-                    "petal_width": "0.2",
-                },
-            )
+        )
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Iris-setosa", response.data)
