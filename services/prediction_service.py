@@ -37,6 +37,25 @@ def get_class_image_path(class_label: str) -> str | None:
 
     return CLASS_IMAGE_PATHS.get(normalized_label)
 
+CLASS_IMAGE_PATHS = {
+    "iris-setosa": "images/iris-setosa.svg",
+    "iris-versicolor": "images/iris-versicolor.svg",
+    "iris-virginica": "images/iris-virginica.svg",
+}
+
+
+def get_class_image_path(class_label: str) -> str | None:
+    """Return static image path for a predicted class label."""
+    normalized_label = class_label.strip().lower()
+
+    if normalized_label in CLASS_IMAGE_PATHS:
+        return CLASS_IMAGE_PATHS[normalized_label]
+
+    if not normalized_label.startswith("iris-"):
+        normalized_label = f"iris-{normalized_label}"
+
+    return CLASS_IMAGE_PATHS.get(normalized_label)
+
 
 def predict_iris(features: Dict[str, float]) -> Dict[str, object]:
     """Return a deterministic Iris response for the web result template."""
@@ -64,6 +83,8 @@ def predict_iris(features: Dict[str, float]) -> Dict[str, object]:
             normalized_prediction = normalized_prediction.replace("iris-", "", 1)
         label_to_index = {"setosa": 0, "versicolor": 1, "virginica": 2}
         predicted_class_index = label_to_index.get(normalized_prediction)
+
+    predicted_class_image_path = get_class_image_path(predicted_class_label)
 
     predicted_class_image_path = get_class_image_path(predicted_class_label)
 

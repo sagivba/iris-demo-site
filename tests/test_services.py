@@ -22,19 +22,18 @@ class PredictionServiceTests(unittest.TestCase):
             "petal_width": 0.2,
         }
 
-        with patch("services.prediction_service.predict_species", return_value="versicolor"):
-            result = predict_iris(features)
+        result = predict_iris(features)
 
         self.assertEqual(
             result,
             {
-                "predicted_class_index": 1,
-                "predicted_class_label": "Iris-versicolor",
-                "predicted_class_image_path": "images/iris-versicolor.svg",
+                "predicted_class_index": 0,
+                "predicted_class_label": "Iris-setosa",
+                "predicted_class_image_path": "images/iris-setosa.svg",
             },
         )
 
-    def test_predict_iris_returns_none_image_when_class_is_unknown(self):
+    def test_predict_iris_does_not_load_model_artifact(self):
         features = {
             "sepal_length": 5.1,
             "sepal_width": 3.5,
@@ -42,11 +41,15 @@ class PredictionServiceTests(unittest.TestCase):
             "petal_width": 0.2,
         }
 
-        with patch("services.prediction_service.predict_species", return_value="mystery-class"):
+        with patch(
+            "services.prediction_service.predict_species",
+            side_effect=AssertionError("predict_species must not be called in predict_iris"),
+        ) as mock_predict:
             result = predict_iris(features)
 
-        self.assertEqual(result["predicted_class_label"], "mystery-class")
-        self.assertIsNone(result["predicted_class_image_path"])
+        mock_predict.assert_not_called()
+        self.assertEqual(result["predicted_class_label"], "Iris-setosa")
+        self.assertEqual(result["predicted_class_image_path"], "images/iris-setosa.svg")
 
     def test_predict_from_raw_input_returns_prediction_on_success(self):
         raw_input = {

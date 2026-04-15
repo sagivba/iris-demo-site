@@ -43,6 +43,30 @@ class WebRoutesTestCase(unittest.TestCase):
         self.assertIn(b"Example image of predicted class.", response.data)
         self.assertIn(b"static/images/iris-setosa.svg", response.data)
 
+    def test_predict_form_submission_success_without_model_artifact(self) -> None:
+        response = self.client.post(
+            "/predict",
+            data={
+                "sepal_length": "5.1",
+                "sepal_width": "3.5",
+                "petal_length": "1.4",
+                "petal_width": "0.2",
+            },
+        ):
+            response = self.client.post(
+                "/predict",
+                data={
+                    "sepal_length": "5.1",
+                    "sepal_width": "3.5",
+                    "petal_length": "1.4",
+                    "petal_width": "0.2",
+                },
+            )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertIn(b"Iris-setosa", response.data)
+        self.assertIn(b"static/images/iris-setosa.svg", response.data)
+
     def test_predict_form_submission_renders_image_fallback_message(self) -> None:
         with patch(
             "routes.web.predict_iris",
