@@ -40,4 +40,26 @@
       <button type="reset" class="button-secondary">Reset</button>
     </div>
   </form>
+
+  <section class="result-panel" aria-live="polite">
+    <h2>Prediction Result</h2>
+    {% if prediction_label %}
+      <p>{{ prediction_label }}</p>
+    {% else %}
+      <p>No prediction yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="error-panel" aria-live="assertive">
+    <h2>Errors</h2>
+    {% if errors %}
+      <ul>
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No errors.</p>
+    {% endif %}
+  </section>
 {% endblock %}

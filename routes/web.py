@@ -13,7 +13,7 @@ web_bp = Blueprint("web", __name__)
 @web_bp.get("/")
 def home():
     """Render the main Iris input page."""
-    return render_template("index.html", errors=[], form_values={})
+    return render_template("index.html", errors=[], form_values={}, prediction_label=None)
 
 
 @web_bp.post("/predict")
@@ -34,6 +34,7 @@ def predict():
                 "index.html",
                 errors=validation_errors,
                 form_values=raw_inputs,
+                prediction_label=None,
             ),
             400,
         )
@@ -41,7 +42,8 @@ def predict():
     prediction = predict_iris(validated_inputs)
 
     return render_template(
-        "result.html",
-        prediction=prediction,
-        inputs=validated_inputs,
+        "index.html",
+        errors=[],
+        form_values=raw_inputs,
+        prediction_label=prediction["predicted_class_label"],
     )
