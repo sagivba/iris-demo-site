@@ -4,52 +4,41 @@
 
 {% block content %}
   <h1>Iris Predictor</h1>
-  <p class="intro">
-    Enter four flower measurements from the Iris dataset to predict the species.
-  </p>
+  <p class="page-intro">Enter flower measurements to predict an Iris class.</p>
+
+  {% if errors %}
+    <section class="result-panel result-panel--error" aria-live="polite">
+      <h2>Input error</h2>
+      <p>Please fix the following fields and submit again.</p>
+      <ul class="error-list">
+        {% for error in errors %}
+          <li>{{ error }}</li>
+        {% endfor %}
+      </ul>
+    </section>
+  {% endif %}
 
   <form method="post" action="{{ url_for('web.predict') }}" class="predict-form">
-    <label for="sepal_length">Sepal length</label>
-    <input
-      id="sepal_length"
-      name="sepal_length"
-      type="number"
-      step="any"
-      value="{{ form_values.get('sepal_length', '') }}"
-      required
-    />
-
-    <label for="sepal_width">Sepal width</label>
-    <input
-      id="sepal_width"
-      name="sepal_width"
-      type="number"
-      step="any"
-      value="{{ form_values.get('sepal_width', '') }}"
-      required
-    />
-
-    <label for="petal_length">Petal length</label>
-    <input
-      id="petal_length"
-      name="petal_length"
-      type="number"
-      step="any"
-      value="{{ form_values.get('petal_length', '') }}"
-      required
-    />
-
-    <label for="petal_width">Petal width</label>
-    <input
-      id="petal_width"
-      name="petal_width"
-      type="number"
-      step="any"
-      value="{{ form_values.get('petal_width', '') }}"
-      required
-    />
-
-    <button type="submit">Predict</button>
+    <label class="form-field">
+      Sepal length
+      <input name="sepal_length" value="{{ form_values.get('sepal_length', '') }}" />
+    </label>
+    <label class="form-field">
+      Sepal width
+      <input name="sepal_width" value="{{ form_values.get('sepal_width', '') }}" />
+    </label>
+    <label class="form-field">
+      Petal length
+      <input name="petal_length" value="{{ form_values.get('petal_length', '') }}" />
+    </label>
+    <label class="form-field">
+      Petal width
+      <input name="petal_width" value="{{ form_values.get('petal_width', '') }}" />
+    </label>
+    <div class="button-row">
+      <button type="submit">Predict</button>
+      <button type="reset" class="button-secondary">Reset</button>
+    </div>
   </form>
 
   <section class="result-panel" aria-live="polite">

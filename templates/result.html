@@ -4,14 +4,23 @@
 
 {% block content %}
   <h1>Prediction Result</h1>
-  <p>Predicted class: {{ prediction.predicted_class_label }}</p>
+  <section class="result-panel result-panel--success" aria-live="polite">
+    <h2>Predicted class</h2>
+    <p class="prediction-label">{{ prediction.predicted_class_label }}</p>
+    <p class="supporting-text">Prediction completed successfully.</p>
+  </section>
 
-  <h2>Inputs</h2>
-  <ul>
-    {% for key, value in inputs.items() %}
-      <li>{{ key }}: {{ value }}</li>
-    {% endfor %}
-  </ul>
+  <section class="result-panel">
+    <h2>Submitted values</h2>
+    <dl class="input-summary">
+      {% for key, value in inputs.items() %}
+        <dt>{{ key.replace('_', ' ')|title }}</dt>
+        <dd>{{ value }}</dd>
+      {% endfor %}
+    </dl>
+  </section>
 
-  <a href="{{ url_for('web.home') }}">Try another</a>
+  <div class="button-row">
+    <a href="{{ url_for('web.home') }}" class="button-link">Try another</a>
+  </div>
 {% endblock %}
