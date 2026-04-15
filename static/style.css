@@ -97,6 +97,24 @@ button,
   margin-bottom: 0;
 }
 
+.prediction-visual {
+  margin: 1rem 0 0;
+}
+
+.prediction-image {
+  display: block;
+  width: 100%;
+  max-width: 340px;
+  height: auto;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+}
+
+.prediction-visual figcaption {
+  margin-top: 0.5rem;
+  color: #475569;
+}
+
 .error-list {
   margin-bottom: 0;
 }
