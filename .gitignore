@@ -1,89 +1,52 @@
-# Python bytecode and cache
+# Python bytecode/cache
 __pycache__/
 *.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-share/python-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-pip-wheel-metadata/
 
 # Virtual environments
 .venv/
 venv/
 env/
 ENV/
-
-# Conda
-.conda/
 conda-meta/
 
-# Test and coverage
+# Test and coverage artifacts
 .coverage
 .coverage.*
-.pytest_cache/
 htmlcov/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 .tox/
 .nox/
-.cache/
 
-# Type checker / linters
-.mypy_cache/
-.pyre/
-.ruff_cache/
+# Build/distribution artifacts
+build/
+dist/
+*.egg-info/
+pip-wheel-metadata/
 
-# Jupyter
-.ipynb_checkpoints/
-
-# IDE / editor
-.vscode/*
-!.vscode/settings.json
-!.vscode/launch.json
-!.vscode/tasks.json
-
-.idea/
-
-# OS files
-.DS_Store
-Thumbs.db
+# Local runtime files
+instance/
+*.log
 
 # Local environment files
 .env
 .env.*
 !.env.example
 
-# Flask instance / local runtime artifacts
-instance/
-*.log
+# IDE/editor settings (keep shared VS Code configs tracked)
+.vscode/*
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+.idea/
 
-# Model artifacts
-*.joblib
-*.pkl
-*.pickle
-
-# Local data artifacts
-data/
-artifacts/
-
-# Docker local overrides
-docker-compose.override.yml
-
-# WSL / misc temp files
+# OS/editor temp files
+.DS_Store
+Thumbs.db
 *.swp
 *.swo
 *~
+
+# Optional local Docker overrides
+docker-compose.override.yml
