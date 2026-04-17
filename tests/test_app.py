@@ -17,6 +17,11 @@ class WebRoutesTestCase(unittest.TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertIn(b"Iris Predictor", response.data)
+        self.assertIn(b'name="smiles"', response.data)
+        self.assertIn(b"Submit", response.data)
+        self.assertIn(b"Reset", response.data)
+        self.assertIn(b"Errors", response.data)
+        self.assertIn(b"Prediction Result", response.data)
 
     def test_predict_form_submission_success(self) -> None:
         with patch(
