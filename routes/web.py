@@ -64,6 +64,10 @@ def predict():
         "petal_length": request.form.get("petal_length", ""),
         "petal_width": request.form.get("petal_width", ""),
     }
+    form_values = {
+        "smiles": request.form.get("smiles", ""),
+        **raw_inputs,
+    }
 
     validated_inputs, validation_errors = validate_iris_inputs(raw_inputs)
 
@@ -72,7 +76,7 @@ def predict():
             render_template(
                 "index.html",
                 errors=_format_validation_errors(validation_errors),
-                form_values=raw_inputs,
+                form_values=form_values,
                 prediction_label=None,
             ),
             400,
@@ -89,7 +93,7 @@ def predict():
                     "We could not generate a prediction right now. "
                     "Please try again in a moment."
                 ],
-                form_values=raw_inputs,
+                form_values=form_values,
             ),
             500,
         )
@@ -97,7 +101,7 @@ def predict():
     return render_template(
         "index.html",
         errors=[],
-        form_values=raw_inputs,
+        form_values=form_values,
         prediction_label=prediction["predicted_class_label"],
         prediction_image_path=prediction["predicted_class_image_path"],
         prediction_image_alt=prediction["predicted_class_label"],

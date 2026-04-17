@@ -20,6 +20,16 @@
 
   <form method="post" action="{{ url_for('web.predict') }}" class="predict-form">
     <label class="form-field">
+      SMILES
+      <input
+        name="smiles"
+        value="{{ form_values.get('smiles', '') }}"
+        placeholder="e.g. CCO"
+        aria-describedby="smiles-help"
+      />
+      <span id="smiles-help" class="supporting-text">Mock input for chemistry workflow.</span>
+    </label>
+    <label class="form-field">
       Sepal length
       <input name="sepal_length" value="{{ form_values.get('sepal_length', '') }}" />
     </label>
@@ -36,7 +46,7 @@
       <input name="petal_width" value="{{ form_values.get('petal_width', '') }}" />
     </label>
     <div class="button-row">
-      <button type="submit">Predict</button>
+      <button type="submit">Submit</button>
       <button type="reset" class="button-secondary">Reset</button>
     </div>
   </form>
